@@ -34,6 +34,7 @@
     <dependency>
       <groupId>com.google.android</groupId>
       <artifactId>android</artifactId>
+      <version>22</version>
     </dependency>
   </dependencies>
 
@@ -41,6 +42,7 @@
     <groupId>com.google.zxing</groupId>
     <artifactId>zxing-parent</artifactId>
     <version>3.4.1-SNAPSHOT</version>
+
   </parent>
 
   <build>
