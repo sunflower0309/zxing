@@ -217,7 +217,8 @@ final class BitMatrixParser {
   }
 
   /**
-   * Prepare the parser for a mirrored operation.
+   * Prepare the parser for a
+   * ed operation.
    * This flag has effect only on the {@link #readFormatInformation()} and the
    * {@link #readVersion()}. Before proceeding with {@link #readCodewords()} the
    * {@link #mirror()} method should be called.

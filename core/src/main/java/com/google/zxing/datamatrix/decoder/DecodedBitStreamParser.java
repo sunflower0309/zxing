@@ -91,6 +91,9 @@ final class DecodedBitStreamParser {
     do {
       if (mode == Mode.ASCII_ENCODE) {
         mode = decodeAsciiSegment(bits, result, resultTrailer);
+        if(mode==Mode.PAD_ENCODE){
+          System.out.println(mode);//only print PAD_ENCODE, simplify the output
+        }
       } else {
         switch (mode) {
           case C40_ENCODE:
@@ -111,7 +114,9 @@ final class DecodedBitStreamParser {
           default:
             throw FormatException.getFormatInstance();
         }
+        System.out.println(mode);//print the original mode
         mode = Mode.ASCII_ENCODE;
+        System.out.println(mode);//print the mode after reset
       }
     } while (mode != Mode.PAD_ENCODE && bits.available() > 0);
     if (resultTrailer.length() > 0) {
