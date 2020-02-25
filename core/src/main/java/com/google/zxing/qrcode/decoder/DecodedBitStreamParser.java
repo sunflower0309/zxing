@@ -117,6 +117,7 @@ final class DecodedBitStreamParser {
                 decodeAlphanumericSegment(bits, result, count, fc1InEffect);
                 break;
               case BYTE:
+                System.out.println(count);
                 decodeByteSegment(bits, result, count, currentCharacterSetECI, byteSegments, hints);
                 break;
               case KANJI:
@@ -231,20 +232,51 @@ final class DecodedBitStreamParser {
     for (int i = 0; i < count; i++) {
       readBytes[i] = (byte) bits.readBits(8);
     }
-    String encoding;
+    String encoding="UTF8";
     if (currentCharacterSetECI == null) {
       // The spec isn't clear on this mode; see
       // section 6.4.5: t does not say which encoding to assuming
       // upon decoding. I have seen ISO-8859-1 used as well as
       // Shift_JIS -- without anything like an ECI designator to
       // give a hint.
-      encoding = StringUtils.guessEncoding(readBytes, hints);
+      //encoding = StringUtils.guessEncoding(readBytes, hints);
     } else {
       encoding = currentCharacterSetECI.name();
     }
     try {
       result.append(new String(readBytes, encoding));
     } catch (UnsupportedEncodingException ignored) {
+      throw FormatException.getFormatInstance();
+    }
+    byteSegments.add(readBytes);
+  }
+
+  public static void decodeByteSegment1(BitSource bits,
+                                        StringBuilder result,
+                                        int count,
+                                        CharacterSetECI currentCharacterSetECI,
+                                        Collection<byte[]> byteSegments,
+                                        Map<DecodeHintType,?> hints) throws FormatException {
+    // Don't crash trying to read more bits than we have available.
+    if (8 * count > bits.available()) {
+      throw FormatException.getFormatInstance();
+    }
+
+    byte[] readBytes = new byte[count];
+    for (int i = 0; i < count; i++) {
+      readBytes[i] = (byte) bits.readBits(8);
+    }
+    String encoding="UTF8";
+    if (currentCharacterSetECI == null) {
+      //encoding = StringUtils.guessEncoding(readBytes, hints);
+      System.out.println(encoding);
+    } else {
+      encoding = currentCharacterSetECI.name();
+    }
+    try {
+      result.append(new String(readBytes, encoding));
+    } catch (UnsupportedEncodingException ignored) {
+      System.out.println(encoding);
       throw FormatException.getFormatInstance();
     }
     byteSegments.add(readBytes);
@@ -297,6 +329,48 @@ final class DecodedBitStreamParser {
   }
 
   private static void decodeNumericSegment(BitSource bits,
+                                           StringBuilder result,
+                                           int count) throws FormatException {
+    // Read three digits at a time
+    while (count >= 3) {
+      // Each 10 bits encodes three digits
+      if (bits.available() < 10) {
+        throw FormatException.getFormatInstance();
+      }
+      int threeDigitsBits = bits.readBits(10);
+      if (threeDigitsBits >= 1000) {
+        throw FormatException.getFormatInstance();
+      }
+      result.append(toAlphaNumericChar(threeDigitsBits / 100));
+      result.append(toAlphaNumericChar((threeDigitsBits / 10) % 10));
+      result.append(toAlphaNumericChar(threeDigitsBits % 10));
+      count -= 3;
+    }
+    if (count == 2) {
+      // Two digits left over to read, encoded in 7 bits
+      if (bits.available() < 7) {
+        throw FormatException.getFormatInstance();
+      }
+      int twoDigitsBits = bits.readBits(7);
+      if (twoDigitsBits >= 100) {
+        throw FormatException.getFormatInstance();
+      }
+      result.append(toAlphaNumericChar(twoDigitsBits / 10));
+      result.append(toAlphaNumericChar(twoDigitsBits % 10));
+    } else if (count == 1) {
+      // One digit left over to read
+      if (bits.available() < 4) {
+        throw FormatException.getFormatInstance();
+      }
+      int digitBits = bits.readBits(4);
+      if (digitBits >= 10) {
+        throw FormatException.getFormatInstance();
+      }
+      result.append(toAlphaNumericChar(digitBits));
+    }
+  }
+
+  public static void decodeNumericSegment1(BitSource bits,
                                            StringBuilder result,
                                            int count) throws FormatException {
     // Read three digits at a time

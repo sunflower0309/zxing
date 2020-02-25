@@ -123,8 +123,10 @@ public final class DecodedBitStreamParserTestCase extends Assert {
     // ASCII double digit (00 - 99) Numeric Value + 130
     byte[] bytes = {(byte)       130 , (byte) (1 + 130),
                     (byte) (98 + 130), (byte) (99 + 130)};
+    System.out.println("ASCII Mode Change Test:");
     String decodedString = DecodedBitStreamParser.decode(bytes).getText();
     assertEquals("00019899", decodedString);
+    System.out.println("ASCII Mode Change Test Finish\n");
   }
 
   @Test
@@ -143,6 +145,7 @@ public final class DecodedBitStreamParserTestCase extends Assert {
     System.out.println("C40 Mode Change Test:");
     byte[] bytes={(byte)230,(byte)91,(byte)11};
     assertEquals(DecodedBitStreamParser.decode(bytes).getText(),"AIM");
+    System.out.println("C40 Mode Change Test Finish\n");
   }
 
   @Test
@@ -161,6 +164,7 @@ public final class DecodedBitStreamParserTestCase extends Assert {
     System.out.println("TEXT Mode Change Test:");
     byte[] bytes={(byte)239,(byte)91,(byte)11,(byte)254,(byte)67,(byte)129};
     assertEquals(DecodedBitStreamParser.decode(bytes).getText(),"aimB");
+    System.out.println("TEXT Mode Change Test Finish\n");
   }
 
   @Test
@@ -180,6 +184,7 @@ public final class DecodedBitStreamParserTestCase extends Assert {
     //238 89 233 14 192 100 207 44 31 67 ||  ABC>ABC123>AB
     byte[] bytes={(byte)238,(byte)89,(byte)233,(byte)14,(byte)192,(byte)100,(byte)207,(byte)44,(byte)31,(byte)67};
     assertEquals(DecodedBitStreamParser.decode(bytes).getText(),"ABC>ABC123>AB");
+    System.out.println("ANSIX12 Mode Change Test Finish\n");
   }
 
   @Test
@@ -199,6 +204,7 @@ public final class DecodedBitStreamParserTestCase extends Assert {
     //240 184 27 131 198 236 238 98 230 50 47 47  ||  .A.C1.3.X.X2..
     byte[] bytes={(byte)240,(byte)184,(byte)27,(byte)131,(byte)198,(byte)236,(byte)238,(byte)98,(byte)230,(byte)50,(byte)47,(byte)47};
     assertEquals(DecodedBitStreamParser.decode(bytes).getText(),".A.C1.3.X.X2..");
+    System.out.println("EDIFACT Mode Change Test Finish\n");
   }
 
   @Test
@@ -218,6 +224,7 @@ public final class DecodedBitStreamParserTestCase extends Assert {
     //231 51 108 59 226 126 1 141 254 129   ||  \u00ABäöüéà\u00BB
     byte[] bytes={(byte)231,(byte)51,(byte)108,(byte)59,(byte)226,(byte)126,(byte)1,(byte)141,(byte)254,(byte)129};
     assertEquals(DecodedBitStreamParser.decode(bytes).getText(),"\u00ABäöüéà\u00BB");
+    System.out.println("BASE256 Mode Change Test Finish\n");
   }
 
   @Test
@@ -236,6 +243,7 @@ public final class DecodedBitStreamParserTestCase extends Assert {
     //231 51 108 59 226 126 1 141 254 129   ||  \u00ABäöüéà\u00BB
     byte[] bytes={(byte)130,(byte)131,(byte)129,(byte)135,(byte)137};
     assertEquals(DecodedBitStreamParser.decode(bytes).getText(),"0001");
+    System.out.println("PAD Mode Change Test Finish\n");
   }
   // TODO(bbrown): Add test cases for each encoding type
   // TODO(bbrown): Add test cases for switching encoding types

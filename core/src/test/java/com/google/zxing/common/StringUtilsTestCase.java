@@ -26,36 +26,36 @@ import java.nio.charset.Charset;
  */
 public final class StringUtilsTestCase extends Assert {
 
-  @Test
-  public void testShortShiftJIS1() {
-    // ÈáëÈ≠ö
-    doTest(new byte[] { (byte) 0x8b, (byte) 0xe0, (byte) 0x8b, (byte) 0x9b, }, "SJIS");
-  }
+//  @Test
+//  public void testShortShiftJIS1() {
+//    // ÈáëÈ≠ö
+//    doTest(new byte[] { (byte) 0x8b, (byte) 0xe0, (byte) 0x8b, (byte) 0x9b, }, "SJIS");
+//  }
+//
+//  @Test
+//  public void testShortISO885911() {
+//    // b√•d
+//    doTest(new byte[] { (byte) 0x62, (byte) 0xe5, (byte) 0x64, }, "ISO-8859-1");
+//  }
 
-  @Test
-  public void testShortISO885911() {
-    // b√•d
-    doTest(new byte[] { (byte) 0x62, (byte) 0xe5, (byte) 0x64, }, "ISO-8859-1");
-  }
+//  @Test
+//  public void testMixedShiftJIS1() {
+//    // Hello Èáë!
+//    doTest(new byte[] { (byte) 0x48, (byte) 0x65, (byte) 0x6c, (byte) 0x6c, (byte) 0x6f,
+//                        (byte) 0x20, (byte) 0x8b, (byte) 0xe0, (byte) 0x21, },
+//           "SJIS");
+//  }
 
-  @Test
-  public void testMixedShiftJIS1() {
-    // Hello Èáë!
-    doTest(new byte[] { (byte) 0x48, (byte) 0x65, (byte) 0x6c, (byte) 0x6c, (byte) 0x6f,
-                        (byte) 0x20, (byte) 0x8b, (byte) 0xe0, (byte) 0x21, },
-           "SJIS");
-  }
-
-  private static void doTest(byte[] bytes, String charsetName) {
-    Charset charset = Charset.forName(charsetName);
-    String guessedName = StringUtils.guessEncoding(bytes, null);
-    Charset guessedEncoding = Charset.forName(guessedName);
-    assertEquals(charset, guessedEncoding);
-  }
+//  private static void doTest(byte[] bytes, String charsetName) {
+//    Charset charset = Charset.forName(charsetName);
+//    String guessedName = StringUtils.guessEncoding(bytes, null);
+//    Charset guessedEncoding = Charset.forName(guessedName);
+//    assertEquals(charset, guessedEncoding);
+//  }
 
   /**
    * Utility for printing out a string in given encoding as a Java statement, since it's better
-   * to write that into the Java source file rather than risk character encoding issues in the 
+   * to write that into the Java source file rather than risk character encoding issues in the
    * source file itself.
    *
    * @param args command line arguments

@@ -60,6 +60,30 @@ public final class VINResultParser extends ResultParser {
     }
   }
 
+  public VINParsedResult parse2(Result result) {
+    if (result.getBarcodeFormat() != BarcodeFormat.CODE_39) {
+      return null;
+    }
+    String rawText = result.getText();
+    rawText = IOQ.matcher(rawText).replaceAll("").trim();
+    if (!AZ09.matcher(rawText).matches()) {
+      return null;
+    }
+    try {
+      String wmi = rawText.substring(0, 3);
+      return new VINParsedResult(rawText,
+        wmi,
+        rawText.substring(3, 9),
+        rawText.substring(9, 17),
+        countryCode(wmi),
+        rawText.substring(3, 8),
+        modelYear(rawText.charAt(9)),
+        rawText.charAt(10),
+        rawText.substring(11));
+    } catch (IllegalArgumentException iae) {
+      return null;
+    }
+  }
   private static boolean checkChecksum(CharSequence vin) {
     int sum = 0;
     for (int i = 0; i < vin.length(); i++) {
@@ -69,7 +93,7 @@ public final class VINResultParser extends ResultParser {
     char expectedCheckChar = checkChar(sum % 11);
     return checkChar == expectedCheckChar;
   }
-  
+
   private static int vinCharValue(char c) {
     if (c >= 'A' && c <= 'I') {
       return (c - 'A') + 1;
@@ -85,7 +109,7 @@ public final class VINResultParser extends ResultParser {
     }
     throw new IllegalArgumentException();
   }
-  
+
   private static int vinPositionWeight(int position) {
     if (position >= 1 && position <= 7) {
       return 9 - position;
@@ -111,7 +135,7 @@ public final class VINResultParser extends ResultParser {
     }
     throw new IllegalArgumentException();
   }
-  
+
   private static int modelYear(char c) {
     if (c >= 'E' && c <= 'H') {
       return (c - 'E') + 1984;
