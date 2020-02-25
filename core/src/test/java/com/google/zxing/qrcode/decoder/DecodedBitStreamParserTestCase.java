@@ -46,7 +46,7 @@ import static org.mockito.Mockito.*;
  */
 @PrepareForTest(StringUtils.class)
 @RunWith(PowerMockRunner.class)
-public final class DecodedBitStreamParserTestCase extends Assert {
+public class DecodedBitStreamParserTestCase extends Assert {
 //  @Before
 //  public void before(){
 //    PowerMockito.mockStatic(StringUtils.class);
@@ -155,15 +155,18 @@ public final class DecodedBitStreamParserTestCase extends Assert {
 //    when(StringUtils.guessEncoding(isA(byte[].class),isA(Map.class))).thenReturn("FOOO2");
 //    when(StringUtils.guessEncoding(builder.toByteArray(),null)).thenReturn("FOOO2");
 //    when(StringUtils.guessEncoding(any(byte[].class),any(Map.class))).thenReturn("FOOO2");
-    when(StringUtils.guessEncoding(any(),any())).thenReturn("FOOO2");
-    System.out.print(StringUtils.guessEncoding(builder.toByteArray(),null));
-//    try{
-//      DecodedBitStreamParser.decodeByteSegment1(bitSource,stringBuilder,3,null,
-//        byteSegments,null);
-//    }
-//    catch (FormatException e){
-//      e.printStackTrace();
-//    }
+    when(StringUtils.guessEncoding(Mockito.any(),Mockito.any())).thenReturn("FOOO2");
+    //System.out.print(StringUtils.guessEncoding(builder.toByteArray(),null));
+    try{
+
+      DecodedBitStreamParser.decodeByteSegment1(bitSource,stringBuilder,3,null,
+        byteSegments,null);
+    }
+    catch (FormatException e){
+      e.printStackTrace();
+    }
+//    PowerMockito.verifyStatic(StringUtils.class,Mockito.times(1));
+//    StringUtils.guessEncoding(Mockito.any(),Mockito.any());
 //and when I remove the static before guessEncoding, the mock works
   }
 }
