@@ -136,7 +136,7 @@ public class DecodedBitStreamParserTestCase extends Assert {
   }
   // TODO definitely need more tests here
   @Test
-  public void MocktestdecodeByteSegment() throws Exception{
+  public void mocktestdecodeByteSegment() throws Exception{
 
     StringBuilder stringBuilder=new StringBuilder();
     BitSourceBuilder builder = new BitSourceBuilder();
@@ -147,16 +147,8 @@ public class DecodedBitStreamParserTestCase extends Assert {
     builder.write(0xF3, 8);
     BitSource bitSource=new BitSource(builder.toByteArray());
     List<byte[]> byteSegments = new ArrayList<>(1);
-    //when(StringUtils.guessEncoding(builder.toByteArray(),null)).thenReturn("FOOO2");
-    //StringUtils stringUtils=mock(StringUtils.class);
-    //PowerMockito.doReturn("FOOO2").when(StringUtils.guessEncoding(isA(byte[].class),isA(Map.class)));
     PowerMockito.mockStatic(StringUtils.class);
-    //StringUtils stringUtils=mock(StringUtils.class);
-//    when(StringUtils.guessEncoding(isA(byte[].class),isA(Map.class))).thenReturn("FOOO2");
-//    when(StringUtils.guessEncoding(builder.toByteArray(),null)).thenReturn("FOOO2");
-//    when(StringUtils.guessEncoding(any(byte[].class),any(Map.class))).thenReturn("FOOO2");
     when(StringUtils.guessEncoding(Mockito.any(),Mockito.any())).thenReturn("FOOO2");
-    //System.out.print(StringUtils.guessEncoding(builder.toByteArray(),null));
     try{
 
       DecodedBitStreamParser.decodeByteSegment1(bitSource,stringBuilder,3,null,
@@ -165,6 +157,13 @@ public class DecodedBitStreamParserTestCase extends Assert {
     catch (FormatException e){
       e.printStackTrace();
     }
+    //when(StringUtils.guessEncoding(builder.toByteArray(),null)).thenReturn("FOOO2");
+    //StringUtils stringUtils=mock(StringUtils.class);
+    //PowerMockito.doReturn("FOOO2").when(StringUtils.guessEncoding(isA(byte[].class),isA(Map.class)));
+    //StringUtils stringUtils=mock(StringUtils.class);
+//    when(StringUtils.guessEncoding(isA(byte[].class),isA(Map.class))).thenReturn("FOOO2");
+//    when(StringUtils.guessEncoding(builder.toByteArray(),null)).thenReturn("FOOO2");
+//    when(StringUtils.guessEncoding(any(byte[].class),any(Map.class))).thenReturn("FOOO2");
 //    PowerMockito.verifyStatic(StringUtils.class,Mockito.times(1));
 //    StringUtils.guessEncoding(Mockito.any(),Mockito.any());
 //and when I remove the static before guessEncoding, the mock works
