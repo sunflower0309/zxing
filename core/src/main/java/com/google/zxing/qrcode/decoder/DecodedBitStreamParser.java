@@ -269,7 +269,7 @@ final class DecodedBitStreamParser {
     String encoding;
     if (currentCharacterSetECI == null) {
       encoding = StringUtils.guessEncoding(readBytes, hints);
-      //System.out.println(encoding);
+      System.out.println("encoding="+encoding);
     } else {
       encoding = currentCharacterSetECI.name();
     }

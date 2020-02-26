@@ -30,10 +30,12 @@ import org.junit.runner.RunWith;
 import java.io.UnsupportedEncodingException;
 import java.sql.DriverManager;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import com.google.zxing.DecodeHintType;
 import org.mockito.Mockito;
+import org.mockito.internal.matchers.Null;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -47,7 +49,7 @@ import static org.mockito.Mockito.*;
 @PrepareForTest(StringUtils.class)
 @RunWith(PowerMockRunner.class)
 public class DecodedBitStreamParserTestCase extends Assert {
-//  @Before
+  //  @Before
 //  public void before(){
 //    PowerMockito.mockStatic(StringUtils.class);
 //  }
@@ -60,7 +62,7 @@ public class DecodedBitStreamParserTestCase extends Assert {
     builder.write(0xF2, 8);
     builder.write(0xF3, 8);
     String result = DecodedBitStreamParser.decode(builder.toByteArray(),
-        Version.getVersionForNumber(1), null, null).getText();
+      Version.getVersionForNumber(1), null, null).getText();
     assertEquals("\u00f1\u00f2\u00f3", result);
   }
 
@@ -74,7 +76,7 @@ public class DecodedBitStreamParserTestCase extends Assert {
     builder.write(0xA3, 8);
     builder.write(0xD0, 8);
     String result = DecodedBitStreamParser.decode(builder.toByteArray(),
-        Version.getVersionForNumber(1), null, null).getText();
+      Version.getVersionForNumber(1), null, null).getText();
     assertEquals("\uff61\uff62\uff63\uff90", result);
   }
 
@@ -89,7 +91,7 @@ public class DecodedBitStreamParserTestCase extends Assert {
     builder.write(0xA2, 8);
     builder.write(0xA3, 8);
     String result = DecodedBitStreamParser.decode(builder.toByteArray(),
-        Version.getVersionForNumber(1), null, null).getText();
+      Version.getVersionForNumber(1), null, null).getText();
     assertEquals("\u00ed\u00f3\u00fa", result);
   }
 
@@ -101,7 +103,7 @@ public class DecodedBitStreamParserTestCase extends Assert {
     builder.write(0x01, 8); // 1 characters
     builder.write(0x03C1, 13);
     String result = DecodedBitStreamParser.decode(builder.toByteArray(),
-        Version.getVersionForNumber(1), null, null).getText();
+      Version.getVersionForNumber(1), null, null).getText();
     assertEquals("\u963f", result);
   }
 
@@ -114,7 +116,7 @@ public class DecodedBitStreamParserTestCase extends Assert {
     // A5A2 (U+30A2) => A5A2 - A1A1 = 401, 4*60 + 01 = 0181
     builder.write(0x0181, 13);
     String result = DecodedBitStreamParser.decode(builder.toByteArray(),
-        Version.getVersionForNumber(1), null, null).getText();
+      Version.getVersionForNumber(1), null, null).getText();
     assertEquals("\u30a2", result);
   }
 
@@ -135,9 +137,9 @@ public class DecodedBitStreamParserTestCase extends Assert {
     }
   }
   // TODO definitely need more tests here
-  @Test
-  public void mocktestdecodeByteSegment() throws Exception{
 
+  @Test
+  public void mocktestdecodeByteSegment1() throws Exception{
     StringBuilder stringBuilder=new StringBuilder();
     BitSourceBuilder builder = new BitSourceBuilder();
     builder.write(0x04, 4); // Byte mode
@@ -148,26 +150,37 @@ public class DecodedBitStreamParserTestCase extends Assert {
     BitSource bitSource=new BitSource(builder.toByteArray());
     List<byte[]> byteSegments = new ArrayList<>(1);
     PowerMockito.mockStatic(StringUtils.class);
-    //when(StringUtils.guessEncoding(Mockito.any(),Mockito.any())).thenReturn("FOOO2");
-    doThrow(new Exception()).when(StringUtils.guessEncoding(any(),any()));
+    when(StringUtils.guessEncoding(Mockito.any(byte[].class),isNull())).thenReturn("FOOO2");
     try{
-
       DecodedBitStreamParser.decodeByteSegment1(bitSource,stringBuilder,3,null,
         byteSegments,null);
     }
     catch (FormatException e){
+      PowerMockito.verifyStatic(StringUtils.class,times(1));
+      StringUtils.guessEncoding(Mockito.any(byte[].class),isNull());
       e.printStackTrace();
-      
     }
-    //when(StringUtils.guessEncoding(builder.toByteArray(),null)).thenReturn("FOOO2");
-    //StringUtils stringUtils=mock(StringUtils.class);
-    //PowerMockito.doReturn("FOOO2").when(StringUtils.guessEncoding(isA(byte[].class),isA(Map.class)));
-    //StringUtils stringUtils=mock(StringUtils.class);
-//    when(StringUtils.guessEncoding(isA(byte[].class),isA(Map.class))).thenReturn("FOOO2");
-//    when(StringUtils.guessEncoding(builder.toByteArray(),null)).thenReturn("FOOO2");
-//    when(StringUtils.guessEncoding(any(byte[].class),any(Map.class))).thenReturn("FOOO2");
-//    PowerMockito.verifyStatic(StringUtils.class,Mockito.times(1));
-//    StringUtils.guessEncoding(Mockito.any(),Mockito.any());
-//and when I remove the static before guessEncoding, the mock works
   }
+
+  @Test
+  public void mocktestdecodeByteSegment2() throws Exception{
+    StringBuilder stringBuilder=new StringBuilder();
+    BitSourceBuilder builder = new BitSourceBuilder();
+    builder.write(0x04, 4); // Byte mode
+    builder.write(0x03, 8); // 3 bytes
+    builder.write(0xF1, 8);
+    builder.write(0xF2, 8);
+    builder.write(0xF3, 8);
+    BitSource bitSource=new BitSource(builder.toByteArray());
+    List<byte[]> byteSegments = new ArrayList<>(1);
+    PowerMockito.mockStatic(StringUtils.class);
+    when(StringUtils.guessEncoding(Mockito.any(byte[].class),Mockito.any(Map.class))).thenReturn("GB2312");
+    Map<DecodeHintType,String> map=new HashMap<>();
+    map.put(DecodeHintType.CHARACTER_SET,"UTF8");
+    DecodedBitStreamParser.decodeByteSegment1(bitSource,stringBuilder,3,null,
+      byteSegments,map);
+    PowerMockito.verifyStatic(StringUtils.class,times(1));
+    StringUtils.guessEncoding(Mockito.any(byte[].class),Mockito.any(Map.class));
+  }
+
 }
