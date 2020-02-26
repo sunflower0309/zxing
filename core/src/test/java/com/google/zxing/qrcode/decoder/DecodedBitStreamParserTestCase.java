@@ -148,7 +148,8 @@ public class DecodedBitStreamParserTestCase extends Assert {
     BitSource bitSource=new BitSource(builder.toByteArray());
     List<byte[]> byteSegments = new ArrayList<>(1);
     PowerMockito.mockStatic(StringUtils.class);
-    when(StringUtils.guessEncoding(Mockito.any(),Mockito.any())).thenReturn("FOOO2");
+    //when(StringUtils.guessEncoding(Mockito.any(),Mockito.any())).thenReturn("FOOO2");
+    doThrow(new Exception()).when(StringUtils.guessEncoding(any(),any()));
     try{
 
       DecodedBitStreamParser.decodeByteSegment1(bitSource,stringBuilder,3,null,
@@ -156,6 +157,7 @@ public class DecodedBitStreamParserTestCase extends Assert {
     }
     catch (FormatException e){
       e.printStackTrace();
+      
     }
     //when(StringUtils.guessEncoding(builder.toByteArray(),null)).thenReturn("FOOO2");
     //StringUtils stringUtils=mock(StringUtils.class);
