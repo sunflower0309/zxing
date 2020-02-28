@@ -1,6 +1,6 @@
 language: java
 sudo: false
-install: mvn -Ptravis -DskipTests=true -nsu -B install
+install: mvn -Ptravis -DskipTests=true  -Dcheckstyle.skip -Drat.skip=true -nsu -B install
 script:
   - mvn -Ptravis ${JACOCO} -nsu -B test
   - find $HOME/.m2/repository/com/google/zxing -path "*SNAPSHOT/*" -delete
