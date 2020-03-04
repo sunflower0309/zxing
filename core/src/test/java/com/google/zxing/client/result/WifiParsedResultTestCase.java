@@ -88,4 +88,6 @@ public final class WifiParsedResultTestCase extends Assert {
     assertEquals(password, wifiResult.getPassword());
     assertEquals(type, wifiResult.getNetworkEncryption());
   }
+
+  //commit  test
 }
