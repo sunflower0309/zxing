@@ -57,5 +57,5 @@ public final class MultiTestCase extends Assert {
     assertEquals("www.airtable.com/jobs", results[1].getText());
     assertEquals(BarcodeFormat.QR_CODE, results[1].getBarcodeFormat());
   }
-
+//commit test
 }
